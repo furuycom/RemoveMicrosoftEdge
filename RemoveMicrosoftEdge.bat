@@ -10,6 +10,14 @@ fltmc >nul 2>&1 || (
     )
     exit 0
 )
+
+echo Do you want to remove Microsoft Edge?
+choice
+IF ERRORLEVEL 2 goto No
+IF ERRORLEVEL 1 GOTO Yes
+
+:Yes
+
 echo --- Uninstall Edge (chromium-based)
 PowerShell -ExecutionPolicy Unrestricted -Command " $installer = (Get-ChildItem \"$env:ProgramFiles*\Microsoft\Edge\Application\*\Installer\setup.exe\"); if (!$installer) { Write-Host Could not find the installer; } else { & $installer.FullName -uninstall -system-level -verbose-logging -force-uninstall }; "
 echo --- Microsoft Edge (Legacy) app
@@ -41,5 +49,12 @@ cd %windir%\SystemApps
 takeown /f Microsoft.MicrosoftEdge* /a /r
 icacls Microsoft.MicrosoftEdge* /grant Everyone:f /t
 for /d %%a in (Microsoft.MicrosoftEdge*) do rd /s /q "%%a"
+cd\Program Files (x86)\Microsoft
+takeown /f Edge* /a /r
+icacls Edge* /grant Everyone:f /t
+for /d %%a in (Edge*) do rd /s /q "%%a"
 echo Removed all Edge folders.
 pause
+
+:No
+exit
